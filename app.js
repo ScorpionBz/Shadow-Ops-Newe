@@ -588,3 +588,32 @@ function toArray(obj){
     ...data
   }));
 }
+```js
+// FIREBASE ONLINE NEXUS
+
+let onlineProfiles = {};
+let onlinePosts = {};
+let onlineClips = {};
+
+const toArray = obj =>
+  Object.entries(obj || {}).map(([id, data]) => ({
+    id,
+    ...data
+  }));
+
+onValue(ref(db, "nexus_profiles"), snapshot => {
+  onlineProfiles = snapshot.val() || {};
+});
+
+onValue(ref(db, "nexus_posts"), snapshot => {
+  onlinePosts = snapshot.val() || {};
+  posts = toArray(onlinePosts);
+  renderFeed();
+});
+
+onValue(ref(db, "nexus_clips"), snapshot => {
+  onlineClips = snapshot.val() || {};
+  clips = toArray(onlineClips);
+  renderClips();
+});
+```
