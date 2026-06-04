@@ -480,3 +480,82 @@ function renderInventory(){
 }
 
 renderShop();
+// =======================
+// SHDW AI PRO
+// =======================
+
+const aiForm = document.getElementById("aiForm");
+
+if(aiForm){
+
+  aiForm.onsubmit = e => {
+
+    e.preventDefault();
+
+    const data =
+      Object.fromEntries(
+        new FormData(aiForm).entries()
+      );
+
+    const game = data.game;
+    const type = data.type;
+
+    const result =
+      document.getElementById("aiResult");
+
+    const AI = {
+
+      title:[
+        `🔥 Dominando ${game} con la comunidad SHDW`,
+        `💀 ¿Podremos ganar en ${game}?`,
+        `🚀 Camino a la victoria en ${game}`,
+        `👑 Noche épica jugando ${game}`,
+        `🎮 Solo los mejores sobreviven en ${game}`
+      ],
+
+      hashtags:[
+        `#${game} #Gaming #ShadowOpsNexus #SHDW`,
+        `#StreamerLatino #${game} #GamingCommunity`,
+        `#TikTokGaming #SHDW #${game}`
+      ],
+
+      bio:[
+        `Streamer apasionado por ${game} y miembro de Shadow Ops Nexus.`,
+        `Creando contenido de ${game} todos los días.`,
+        `Jugador competitivo de ${game} buscando llegar al top.`
+      ],
+
+      ideas:[
+        `Jugar con seguidores`,
+        `Reaccionar a clips de la comunidad`,
+        `Torneo entre streamers`,
+        `Reto extremo en ${game}`,
+        `Mejores momentos de la semana`
+      ],
+
+      recruit:[
+        `🎮 Buscamos jugadores de ${game}. Únete a Shadow Ops Nexus.`,
+        `🔥 Reclutamiento abierto para miembros activos de ${game}.`,
+        `⚔️ Forma parte de la comunidad SHDW y crece con nosotros.`
+      ]
+    };
+
+    const list = AI[type];
+
+    const random =
+      list[
+        Math.floor(
+          Math.random() * list.length
+        )
+      ];
+
+    result.innerHTML = `
+      <div class="card">
+        <h3>🤖 SHDW AI</h3>
+        <p>${random}</p>
+      </div>
+    `;
+
+    addXP(10);
+  };
+}
