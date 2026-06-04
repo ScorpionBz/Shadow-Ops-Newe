@@ -373,8 +373,44 @@ renderShop();
 renderInventory();
 ```
 
-Y revisa que en `index.html` tengas esto al final:
+```js
+// =======================
+// RECOMPENSA DIARIA
+// =======================
 
-```html
-<script type="module" src="app.js"></script>
+const dailyBtn = document.getElementById("dailyReward");
+
+if(dailyBtn){
+
+  dailyBtn.onclick = () => {
+
+    const today = new Date().toDateString();
+
+    const lastClaim =
+      localStorage.getItem("nexus_daily");
+
+    if(lastClaim === today){
+
+      alert("Ya reclamaste tu recompensa hoy.");
+
+      return;
+    }
+
+    localStorage.setItem(
+      "nexus_daily",
+      today
+    );
+
+    addCoins(100);
+    addXP(50);
+
+    alert(
+      "🎁 Ganaste 100 Coins y 50 XP"
+    );
+  };
+}
 ```
+
+
+
+
