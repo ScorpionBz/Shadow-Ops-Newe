@@ -559,3 +559,32 @@ if(aiForm){
     addXP(10);
   };
 }
+// =======================
+// FIREBASE ONLINE NEXUS
+// =======================
+
+let onlineProfiles = {};
+let onlinePosts = {};
+let onlineClips = {};
+
+onValue(ref(db, "nexus_profiles"), snapshot => {
+  onlineProfiles = snapshot.val() || {};
+  renderOnlineProfiles();
+});
+
+onValue(ref(db, "nexus_posts"), snapshot => {
+  onlinePosts = snapshot.val() || {};
+  renderOnlineFeed();
+});
+
+onValue(ref(db, "nexus_clips"), snapshot => {
+  onlineClips = snapshot.val() || {};
+  renderOnlineClips();
+});
+
+function toArray(obj){
+  return Object.entries(obj || {}).map(([id, data]) => ({
+    id,
+    ...data
+  }));
+}
