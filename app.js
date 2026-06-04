@@ -411,6 +411,49 @@ if(dailyBtn){
 }
 ```
 
+```js
+// =======================
+// MEDALLAS SHDW
+// =======================
+
+function getBadges(){
+
+  const badges = [];
+
+  if(xp >= 100){
+    badges.push("🥉 Recluta");
+  }
+
+  if(xp >= 500){
+    badges.push("🥈 Veterano");
+  }
+
+  if(xp >= 1000){
+    badges.push("🥇 Elite");
+  }
+
+  if(xp >= 5000){
+    badges.push("💎 Leyenda");
+  }
+
+  return badges;
+}
+
+function renderBadges(){
+
+  const box =
+  document.getElementById("myBadges");
+
+  if(!box) return;
+
+  const badges = getBadges();
+
+  box.innerHTML =
+    badges.length
+    ? badges.map(b =>
+      `<span class="badge">${b}</span>`
+    ).join(" ")
+    : "Sin medallas";}
 
 
 
