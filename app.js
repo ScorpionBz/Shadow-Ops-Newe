@@ -166,3 +166,188 @@ renderCoins();
 console.log(
   "Shadow Ops Nexus iniciado correctamente"
 );
+// =======================
+// FEED GAMER
+// =======================
+
+const postForm = document.getElementById("postForm");
+
+if(postForm){
+
+  postForm.onsubmit = e => {
+
+    e.preventDefault();
+
+    const post =
+      Object.fromEntries(
+        new FormData(postForm).entries()
+      );
+
+    post.hearts = 0;
+    post.date = new Date().toLocaleString();
+
+    posts.unshift(post);
+
+    saveData();
+
+    renderFeed();
+
+    postForm.reset();
+
+    addXP(20);
+    addCoins(5);
+  };
+}
+
+function renderFeed(){
+
+  const box =
+    document.getElementById("feedList");
+
+  if(!box) return;
+
+  box.innerHTML =
+    posts.map((post,index)=>`
+
+    <div class="card">
+
+      <h3>${post.title}</h3>
+
+      <small>${post.name}</small>
+
+      <p>${post.text || ""}</p>
+
+      ${
+        post.link
+        ?
+        `<a href="${post.link}" target="_blank">
+          Ver contenido
+        </a>`
+        :
+        ""
+      }
+
+      <br><br>
+
+      <button onclick="heartPost(${index})">
+        ❤️ ${post.hearts}
+      </button>
+
+    </div>
+
+  `).join("");
+}
+
+window.heartPost = function(index){
+
+  posts[index].hearts++;
+
+  saveData();
+
+  renderFeed();
+}
+
+renderFeed();
+// =======================
+// CLIPS STREAMER
+// =======================
+
+const clipForm =
+document.getElementById("clipForm");
+
+if(clipForm){
+
+  clipForm.onsubmit = e => {
+
+    e.preventDefault();
+
+    const clip =
+      Object.fromEntries(
+        new FormData(clipForm).entries()
+      );
+
+    clip.hearts = 0;
+
+    clips.unshift(clip);
+
+    saveData();
+
+    renderClips();
+
+    clipForm.reset();
+
+    addXP(50);
+    addCoins(15);
+  };
+}
+
+function renderClips(){
+
+  const box =
+  document.getElementById("clipsList");
+
+  const top =
+  document.getElementById("topStreamer");
+
+  if(!box) return;
+
+  box.innerHTML =
+    clips.map((clip,index)=>`
+
+    <div class="card">
+
+      <h3>${clip.title}</h3>
+
+      <p>${clip.name}</p>
+
+      <p>${clip.game}</p>
+
+      <a href="${clip.video}"
+      target="_blank">
+
+      Ver Clip
+
+      </a>
+
+      <br><br>
+
+      <button
+      onclick="heartClip(${index})">
+
+      ❤️ ${clip.hearts}
+
+      </button>
+
+    </div>
+
+  `).join("");
+
+  if(clips.length){
+
+    const best =
+    [...clips].sort(
+      (a,b)=>b.hearts-a.hearts
+    )[0];
+
+    top.innerHTML = `
+      <div class="card">
+        <h2>👑 ${best.name}</h2>
+        <p>${best.title}</p>
+        <p>❤️ ${best.hearts}</p>
+      </div>
+    `;
+  }
+}
+
+window.heartClip = function(index){
+
+  clips[index].hearts++;
+
+  saveData();
+
+  renderClips();
+
+  addCoins(1);
+}
+
+renderClips();
