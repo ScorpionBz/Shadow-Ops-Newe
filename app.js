@@ -1,0 +1,61 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, push, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+const firebaseConfig={apiKey:"AIzaSyCBE0hhMLUQR91JokZFxSm1119s5tmQ0k4",authDomain:"shadow-ops-nexus.firebaseapp.com",projectId:"shadow-ops-nexus",storageBucket:"shadow-ops-nexus.firebasestorage.app",messagingSenderId:"422758972704",appId:"1:422758972704:web:a57c4ea46a20d6d604eb45"};
+const app=initializeApp(firebaseConfig),db=getDatabase(app),auth=getAuth(app),$=id=>document.getElementById(id);
+let currentUser=JSON.parse(localStorage.getItem("shdw_user")||"null"),coins=Number(localStorage.getItem("shdw_coins")||0),inventory=JSON.parse(localStorage.getItem("shdw_inventory")||"[]"),xp=Number(localStorage.getItem("shdw_xp")||0),posts=[],clips=[],profiles=[];
+const arr=o=>Object.entries(o||{}).map(([id,data])=>({id,...data}));
+const save=()=>{localStorage.setItem("shdw_user",JSON.stringify(currentUser));localStorage.setItem("shdw_coins",coins);localStorage.setItem("shdw_inventory",JSON.stringify(inventory));localStorage.setItem("shdw_xp",xp)};
+const level=()=>Math.floor(xp/100)+1;
+function addXP(n){xp+=Number(n);save();renderProfile();renderBadges()}
+function addCoins(n){coins+=Number(n);save();renderCoins();renderProfile();renderStats()}
+function renderCoins(){if($("myCoins"))$("myCoins").textContent=coins}
+function show(tab){document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));$(tab)?.classList.add("active");scrollTo(0,0)}
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>show(b.dataset.tab));
+$("myProfileBtn")?.addEventListener("click",()=>show("profile"));
+window.selectRole=role=>{show("profile");setTimeout(()=>{const s=document.querySelector('[name="role"]');if(s)s.value=role},100)};
+
+const TR={es:{appTitle:"SHADOW OPS NEXUS",tagline:"Red gamer para jugadores, streamers y creadores",navHome:"🏠 Inicio",navRoles:"🧩 Roles",navFeed:"🔥 Feed",navProfile:"👤 Perfil",navStreamers:"🎙️ Streamers",navMissions:"🎯 Misiones",navRanking:"🏆 Ranking",navShop:"🛒 Tienda",navAI:"🤖 SHDW AI",navChat:"🌎 Chat Global",navHall:"👑 Hall Of Fame",navAdmin:"⚙️ Admin",search:"Buscar jugador, streamer o clip...",heroSub:"Jugadores · Streamers · Creadores",heroText:"La red gamer donde todos pueden crecer, competir, subir clips, ganar Coins y destacar.",joinNow:"Unirme ahora",imStreamer:"Soy Streamer",users:"Usuarios",clips:"Clips",hearts:"Corazones",coinsGiven:"Coins repartidas",whatIs:"🚀 ¿Qué es Shadow Ops Nexus?",whatIsText:"Shadow Ops Nexus conecta jugadores, streamers, clanes, editores, diseñadores y colaboradores en una sola comunidad.",chooseRole:"🧩 Elige tu rol",chooseRoleText:"Selecciona cómo quieres participar.",feedTitle:"🔥 Feed Gamer",gamertag:"Tu gamertag",postTitle:"Título del clip o publicación",description:"Descripción",publish:"Publicar",createProfile:"👤 Crear perfil",saveProfile:"Guardar perfil",myAccount:"🎒 Mi cuenta",badges:"🏅 Mis Medallas",streamerCenter:"🎙️ Centro de Streamers",streamerText:"Sube clips, recibe corazones, usa IA, gana Coins y aparece en rankings.",uploadClip:"🎬 Subir clip",upload:"Subir",streamerClips:"🔥 Clips de Streamers",topStreamer:"👑 Streamer más apoyado",dailyMissions:"🎯 Misiones diarias",globalRanking:"🏆 Ranking Global",shopTitle:"🛒 Tienda SHDW",shopText:"Compra recompensas con SHDW Coins.",rewards:"🎁 Recompensas",inventory:"🎒 Inventario",aiTitle:"🤖 SHDW AI",aiText:"Genera ideas para streams, clips, TikTok, YouTube y reclutamiento.",generate:"Generar",chatTitle:"🌎 Chat Global SHDW",chatPlaceholder:"Escribe un mensaje...",send:"Enviar",adminTitle:"⚙️ Panel Admin",adminText:"Zona para futuras herramientas de administración."}};
+["en","pt","fr","it","de","ja","ko","zh","ar","ru"].forEach(l=>TR[l]={...TR.es,tagline:"Gaming network for players, streamers and creators",navHome:"🏠 Home",navFeed:"🔥 Feed",navProfile:"👤 Profile",navShop:"🛒 Shop",navChat:"🌎 Global Chat",search:"Search player, streamer or clip..."});
+function applyLang(l){const p=TR[l]||TR.es;document.querySelectorAll("[data-i18n]").forEach(e=>{const k=e.dataset.i18n;if(p[k])e.textContent=p[k]});document.querySelectorAll("[data-i18n-placeholder]").forEach(e=>{const k=e.dataset.i18nPlaceholder;if(p[k])e.placeholder=p[k]});localStorage.setItem("nexus_lang",l)}
+const initial=(localStorage.getItem("nexus_lang")||navigator.language||"es").slice(0,2);if($("lang")){$("lang").value=TR[initial]?initial:"es";$("lang").onchange=e=>applyLang(e.target.value)}applyLang(TR[initial]?initial:"es");
+
+$("profileForm")?.addEventListener("submit",async e=>{e.preventDefault();const data=Object.fromEntries(new FormData(e.target).entries());data.xp=xp;data.coins=coins;data.createdAt=new Date().toISOString();await push(ref(db,"nexus_profiles"),data);currentUser=data;save();renderProfile();e.target.reset();alert("Perfil guardado en línea.")});
+function renderProfile(){if(!$("myProfile")||!currentUser)return;$("myProfile").innerHTML=`<div class="card">${currentUser.photo?`<img src="${currentUser.photo}" width="100">`:""}<h3>${currentUser.gamertag||"Jugador SHDW"}</h3><p>${currentUser.role||"Jugador"} · ${currentUser.region||"Global"}</p><p>⭐ Nivel ${level()}</p><p>🎖️ XP ${xp}</p><p>💰 Coins ${coins}</p><p>${currentUser.discord||""}</p></div>`}
+
+$("postForm")?.addEventListener("submit",async e=>{e.preventDefault();const post=Object.fromEntries(new FormData(e.target).entries());post.hearts=0;post.createdAt=new Date().toISOString();await push(ref(db,"nexus_posts"),post);addXP(20);addCoins(5);e.target.reset()});
+function renderFeed(){if(!$("feedList"))return;$("feedList").innerHTML=posts.length?posts.map(p=>`<div class="card searchable"><h3>${p.title}</h3><small>${p.name}</small><p>${p.text||""}</p>${p.link?`<a href="${p.link}" target="_blank">Ver contenido</a>`:""}<br><br><button onclick="heartPost('${p.id}',${p.hearts||0})">❤️ ${p.hearts||0}</button></div>`).join(""):"<p>No hay publicaciones todavía.</p>"}
+window.heartPost=async(id,h=0)=>{await update(ref(db,"nexus_posts/"+id),{hearts:Number(h)+1});addCoins(1)};
+
+$("clipForm")?.addEventListener("submit",async e=>{e.preventDefault();const clip=Object.fromEntries(new FormData(e.target).entries());clip.hearts=0;clip.createdAt=new Date().toISOString();await push(ref(db,"nexus_clips"),clip);addXP(50);addCoins(15);e.target.reset()});
+function renderClips(){if(!$("clipsList"))return;$("clipsList").innerHTML=clips.length?clips.map(c=>`<div class="card searchable"><h3>${c.title}</h3><p>${c.name}</p><p>${c.game||"Gaming"}</p><a href="${c.video}" target="_blank">Ver Clip</a><br><br><button onclick="heartClip('${c.id}',${c.hearts||0})">❤️ ${c.hearts||0}</button></div>`).join(""):"<p>No hay clips todavía.</p>";const top=$("topStreamer");if(top){const best=[...clips].sort((a,b)=>(b.hearts||0)-(a.hearts||0))[0];top.innerHTML=best?`<div class="card"><h2>👑 ${best.name}</h2><p>${best.title}</p><p>❤️ ${best.hearts||0}</p></div>`:"<p>Aún no hay streamer destacado.</p>"}}
+window.heartClip=async(id,h=0)=>{await update(ref(db,"nexus_clips/"+id),{hearts:Number(h)+1});addCoins(1)};
+
+const shopItems=[{id:"bronze",name:"🥉 Marco Bronce",price:100},{id:"silver",name:"🥈 Marco Plata",price:500},{id:"gold",name:"🥇 Marco Oro",price:1000},{id:"diamond",name:"💎 Marco Diamante",price:5000},{id:"vip",name:"👑 Membresía VIP",price:10000},{id:"clip",name:"🎬 Clip Destacado",price:1000},{id:"promo",name:"📢 Promoción Streamer",price:2500},{id:"founder",name:"🏅 Insignia Fundador",price:3000}];
+function renderShop(){if(!$("shopItems"))return;$("shopItems").innerHTML=shopItems.map(i=>`<div class="card"><h3>${i.name}</h3><p>💰 ${i.price} Coins</p><button onclick="buyItem('${i.id}')">Comprar</button></div>`).join("");renderInventory()}
+window.buyItem=id=>{const item=shopItems.find(x=>x.id===id);if(!item)return;if(coins<item.price)return alert("No tienes suficientes Coins.");coins-=item.price;inventory.push(item);save();renderCoins();renderInventory();renderProfile();alert("Compraste: "+item.name)};
+function renderInventory(){if(!$("inventoryList"))return;$("inventoryList").innerHTML=inventory.length?inventory.map(i=>`<div class="card"><h3>${i.name}</h3><p>Propiedad desbloqueada</p></div>`).join(""):"<p>No tienes artículos.</p>"}
+
+$("dailyReward")?.addEventListener("click",()=>{const today=new Date().toDateString();if(localStorage.getItem("nexus_daily")===today)return alert("Ya reclamaste tu recompensa hoy.");localStorage.setItem("nexus_daily",today);addCoins(100);addXP(50);alert("🎁 Ganaste 100 Coins y 50 XP")});
+window.claimMission=(name,x,c)=>{const key="mission_"+name+"_"+new Date().toDateString();if(localStorage.getItem(key))return alert("Ya reclamaste esta misión hoy.");localStorage.setItem(key,"1");addXP(x);addCoins(c);alert(`Misión completada: +${x} XP +${c} Coins`)};
+
+function getBadges(){const b=[];if(xp>=100)b.push("🥉 Recluta");if(xp>=500)b.push("🥈 Veterano");if(xp>=1000)b.push("🥇 Elite");if(xp>=5000)b.push("💎 Leyenda");if(inventory.some(i=>i.id==="vip"))b.push("👑 VIP");return b}
+function renderBadges(){if(!$("myBadges"))return;$("myBadges").innerHTML=getBadges().length?getBadges().map(b=>`<span class="badge">${b}</span>`).join(" "):"Sin medallas"}
+
+$("aiForm")?.addEventListener("submit",e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries()),game=d.game,type=d.type;const AI={title:[`🔥 Dominando ${game} con la comunidad SHDW`,`💀 ¿Podremos ganar en ${game}?`,`🚀 Camino a la victoria en ${game}`],hashtags:[`#${game} #Gaming #ShadowOpsNexus #SHDW`,`#StreamerLatino #${game} #GamingCommunity`],bio:[`Streamer apasionado por ${game} y miembro de Shadow Ops Nexus.`],ideas:[`Jugar con seguidores`,`Reaccionar a clips de la comunidad`,`Torneo entre streamers`,`Reto extremo en ${game}`],recruit:[`🎮 Buscamos jugadores de ${game}. Únete a Shadow Ops Nexus.`]};const list=AI[type]||AI.title;$("aiResult").innerHTML=`<div class="card"><h3>🤖 SHDW AI</h3><p>${list[Math.floor(Math.random()*list.length)]}</p></div>`;addXP(10)});
+
+$("chatForm")?.addEventListener("submit",async e=>{e.preventDefault();const input=$("chatMessage"),text=input.value.trim();if(!text)return;await push(ref(db,"nexus_chat"),{user:currentUser?.gamertag||"Invitado",message:text,createdAt:new Date().toISOString()});input.value=""});
+onValue(ref(db,"nexus_chat"),s=>{const msgs=arr(s.val()).sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));if($("chatMessages"))$("chatMessages").innerHTML=msgs.slice(-80).map(m=>`<div class="card"><b>🎮 ${m.user}</b><p>${m.message}</p></div>`).join("")});
+
+function renderRanking(){if(!$("rankingList"))return;const list=[...profiles].sort((a,b)=>(b.xp||0)-(a.xp||0)).slice(0,20);$("rankingList").innerHTML=list.length?list.map((p,i)=>`<div class="row"><span>${i+1}</span><b>${p.gamertag||"Jugador"}</b><span>${p.xp||0} XP</span><span>${p.coins||0} Coins</span></div>`).join(""):"<p>Sin ranking.</p>";if($("hallList"))$("hallList").innerHTML=list.slice(0,5).map((p,i)=>`<div class="card"><h3>👑 #${i+1} ${p.gamertag||"Jugador"}</h3><p>${p.xp||0} XP · ${p.role||"Jugador"}</p></div>`).join("")}
+function renderStats(){if($("statUsers"))$("statUsers").textContent=profiles.length;if($("statClips"))$("statClips").textContent=clips.length;if($("statHearts"))$("statHearts").textContent=clips.reduce((s,c)=>s+Number(c.hearts||0),0)+posts.reduce((s,p)=>s+Number(p.hearts||0),0);if($("statCoins"))$("statCoins").textContent=coins}
+
+$("searchInput")?.addEventListener("input",e=>{const q=e.target.value.toLowerCase();document.querySelectorAll(".searchable,.card,.row").forEach(el=>{el.style.display=!q||el.textContent.toLowerCase().includes(q)?"":"none"})});
+
+onValue(ref(db,"nexus_profiles"),s=>{profiles=arr(s.val());renderRanking();renderStats()});
+onValue(ref(db,"nexus_posts"),s=>{posts=arr(s.val()).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));renderFeed();renderStats()});
+onValue(ref(db,"nexus_clips"),s=>{clips=arr(s.val()).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));renderClips();renderStats()});
+
+setTimeout(()=>{$("splash")?.remove()},1200);
+renderProfile();renderCoins();renderShop();renderInventory();renderBadges();renderStats();

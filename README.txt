@@ -1,0 +1,1 @@
+Reemplaza logo.png por tu logo. Sube estos archivos a GitHub Pages.

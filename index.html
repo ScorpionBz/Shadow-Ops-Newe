@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050505" />
+  <title>Shadow Ops Nexus</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+  <div id="splash">
+    <img src="logo.png" alt="SHDW">
+    <h1 data-i18n="appTitle">SHADOW OPS NEXUS</h1>
+    <p data-i18n="tagline">Red gamer para jugadores, streamers y creadores</p>
+  </div>
+
+  <aside id="sideMenu">
+    <div class="brand">
+      <img src="logo.png" alt="Logo">
+      <h2>SHDW NEXUS</h2>
+      <span>GLOBAL NETWORK</span>
+    </div>
+    <nav>
+      <button data-tab="home" data-i18n="navHome">🏠 Inicio</button>
+      <button data-tab="roles" data-i18n="navRoles">🧩 Roles</button>
+      <button data-tab="feed" data-i18n="navFeed">🔥 Feed</button>
+      <button data-tab="profile" data-i18n="navProfile">👤 Perfil</button>
+      <button data-tab="streamers" data-i18n="navStreamers">🎙️ Streamers</button>
+      <button data-tab="missions" data-i18n="navMissions">🎯 Misiones</button>
+      <button data-tab="ranking" data-i18n="navRanking">🏆 Ranking</button>
+      <button data-tab="shop" data-i18n="navShop">🛒 Tienda</button>
+      <button data-tab="ai" data-i18n="navAI">🤖 SHDW AI</button>
+      <button data-tab="chat" data-i18n="navChat">🌎 Chat Global</button>
+      <button data-tab="hall" data-i18n="navHall">👑 Hall Of Fame</button>
+      <button data-tab="admin" data-i18n="navAdmin">⚙️ Admin</button>
+    </nav>
+  </aside>
+
+  <header>
+    <button id="menuBtn">☰</button>
+    <input id="searchInput" data-i18n-placeholder="search" placeholder="Buscar jugador, streamer o clip...">
+    <select id="lang">
+      <option value="es">🇲🇽 ES</option><option value="en">🇺🇸 EN</option><option value="pt">🇧🇷 PT</option>
+      <option value="fr">🇫🇷 FR</option><option value="it">🇮🇹 IT</option><option value="de">🇩🇪 DE</option>
+      <option value="ja">🇯🇵 JA</option><option value="ko">🇰🇷 KO</option><option value="zh">🇨🇳 ZH</option>
+      <option value="ar">🇸🇦 AR</option><option value="ru">🇷🇺 RU</option>
+    </select>
+    <button id="myProfileBtn">👤</button>
+  </header>
+
+  <main>
+    <section id="home" class="tab active">
+      <div class="hero">
+        <img src="logo.png" alt="SHDW">
+        <h1>SHADOW OPS NEXUS</h1>
+        <h2 data-i18n="heroSub">Jugadores · Streamers · Creadores</h2>
+        <p data-i18n="heroText">La red gamer donde todos pueden crecer, competir, subir clips, ganar Coins y destacar.</p>
+        <button class="red" data-tab="roles" data-i18n="joinNow">Unirme ahora</button>
+        <button data-tab="streamers" data-i18n="imStreamer">Soy Streamer</button>
+      </div>
+
+      <div class="stats">
+        <article><b id="statUsers">0</b><span data-i18n="users">Usuarios</span></article>
+        <article><b id="statClips">0</b><span data-i18n="clips">Clips</span></article>
+        <article><b id="statHearts">0</b><span data-i18n="hearts">Corazones</span></article>
+        <article><b id="statCoins">0</b><span data-i18n="coinsGiven">Coins repartidas</span></article>
+      </div>
+
+      <article>
+        <h2 data-i18n="whatIs">🚀 ¿Qué es Shadow Ops Nexus?</h2>
+        <p data-i18n="whatIsText">Shadow Ops Nexus es una plataforma gamer creada para conectar jugadores, streamers, clanes, editores, diseñadores y colaboradores en una sola comunidad.</p>
+      </article>
+    </section>
+
+    <section id="roles" class="tab">
+      <article>
+        <h2 data-i18n="chooseRole">🧩 Elige tu rol</h2>
+        <p data-i18n="chooseRoleText">Selecciona cómo quieres participar en la comunidad.</p>
+        <div class="grid">
+          <button class="roleCard" onclick="selectRole('Jugador')">🎮 Jugador</button>
+          <button class="roleCard" onclick="selectRole('Streamer')">🎙️ Streamer</button>
+          <button class="roleCard" onclick="selectRole('Diseñador')">🎨 Diseñador</button>
+          <button class="roleCard" onclick="selectRole('Editor')">🎬 Editor</button>
+          <button class="roleCard" onclick="selectRole('Clan')">⚔️ Clan</button>
+          <button class="roleCard" onclick="selectRole('Colaborador')">🤝 Colaborador</button>
+        </div>
+      </article>
+    </section>
+
+    <section id="feed" class="tab">
+      <article>
+        <h2 data-i18n="feedTitle">🔥 Feed Gamer</h2>
+        <form id="postForm" class="form">
+          <input name="name" data-i18n-placeholder="gamertag" placeholder="Tu gamertag" required>
+          <input name="title" data-i18n-placeholder="postTitle" placeholder="Título del clip o publicación" required>
+          <input name="link" placeholder="Link de TikTok, YouTube, Twitch o imagen">
+          <textarea name="text" data-i18n-placeholder="description" placeholder="Descripción"></textarea>
+          <button class="red" data-i18n="publish">Publicar</button>
+        </form>
+      </article>
+      <div id="feedList" class="cards"></div>
+    </section>
+
+    <section id="profile" class="tab">
+      <article>
+        <h2 data-i18n="createProfile">👤 Crear perfil</h2>
+        <form id="profileForm" class="form">
+          <input name="gamertag" placeholder="Gamertag" required>
+          <input name="email" type="email" placeholder="Correo">
+          <input name="photo" placeholder="URL de foto">
+          <input name="region" placeholder="Región / País">
+          <input name="discord" placeholder="Discord">
+          <input name="mainGame" placeholder="Juego principal">
+          <select name="role">
+            <option>Jugador</option><option>Streamer</option><option>Diseñador</option>
+            <option>Editor</option><option>Clan</option><option>Colaborador</option>
+          </select>
+          <textarea name="bio" placeholder="Biografía"></textarea>
+          <button class="red" data-i18n="saveProfile">Guardar perfil</button>
+        </form>
+      </article>
+      <article><h2 data-i18n="myAccount">🎒 Mi cuenta</h2><div id="myProfile"></div></article>
+      <article><h2 data-i18n="badges">🏅 Mis Medallas</h2><div id="myBadges"></div></article>
+    </section>
+
+    <section id="streamers" class="tab">
+      <article class="premium">
+        <h2 data-i18n="streamerCenter">🎙️ Centro de Streamers</h2>
+        <p data-i18n="streamerText">Sube clips, recibe corazones, usa IA, gana Coins y aparece en rankings.</p>
+      </article>
+      <article>
+        <h2 data-i18n="uploadClip">🎬 Subir clip</h2>
+        <form id="clipForm" class="form">
+          <input name="name" placeholder="Nombre / Gamertag" required>
+          <input name="title" placeholder="Título del clip" required>
+          <input name="video" placeholder="Link del clip" required>
+          <input name="game" placeholder="Juego">
+          <button class="red" data-i18n="upload">Subir</button>
+        </form>
+      </article>
+      <article><h2 data-i18n="streamerClips">🔥 Clips de Streamers</h2><div id="clipsList" class="cards"></div></article>
+      <article><h2 data-i18n="topStreamer">👑 Streamer más apoyado</h2><div id="topStreamer"></div></article>
+    </section>
+
+    <section id="missions" class="tab">
+      <article>
+        <h2 data-i18n="dailyMissions">🎯 Misiones diarias</h2>
+        <div class="grid">
+          <button id="dailyReward">🎁 Recompensa diaria<br><small>+50 XP · +100 Coins</small></button>
+          <button onclick="claimMission('clip',50,15)">🎬 Subir clip<br><small>+50 XP · +15 Coins</small></button>
+          <button onclick="claimMission('heart',10,2)">❤️ Dar corazón<br><small>+10 XP · +2 Coins</small></button>
+          <button onclick="claimMission('share',30,10)">📤 Compartir app<br><small>+30 XP · +10 Coins</small></button>
+        </div>
+      </article>
+    </section>
+
+    <section id="ranking" class="tab">
+      <article><h2 data-i18n="globalRanking">🏆 Ranking Global</h2><div id="rankingList" class="rows"></div></article>
+    </section>
+
+    <section id="shop" class="tab">
+      <article class="premium">
+        <h2 data-i18n="shopTitle">🛒 Tienda SHDW</h2>
+        <p data-i18n="shopText">Compra recompensas con SHDW Coins.</p>
+        <h3>💰 Tus Coins: <span id="myCoins">0</span></h3>
+      </article>
+      <article><h2 data-i18n="rewards">🎁 Recompensas</h2><div id="shopItems" class="cards"></div></article>
+      <article><h2 data-i18n="inventory">🎒 Inventario</h2><div id="inventoryList" class="cards"></div></article>
+    </section>
+
+    <section id="ai" class="tab">
+      <article>
+        <h2 data-i18n="aiTitle">🤖 SHDW AI</h2>
+        <p data-i18n="aiText">Genera ideas para streams, clips, TikTok, YouTube y reclutamiento.</p>
+        <form id="aiForm" class="form">
+          <input name="game" placeholder="Juego: Warzone, FC 26, Fortnite..." required>
+          <select name="type">
+            <option value="title">Título para stream</option>
+            <option value="hashtags">Hashtags</option>
+            <option value="bio">Biografía streamer</option>
+            <option value="ideas">Ideas de contenido</option>
+            <option value="recruit">Mensaje para reclutar</option>
+          </select>
+          <button class="red" data-i18n="generate">Generar</button>
+        </form>
+        <div id="aiResult" class="aiBox"></div>
+      </article>
+    </section>
+
+    <section id="chat" class="tab">
+      <article>
+        <h2 data-i18n="chatTitle">🌎 Chat Global SHDW</h2>
+        <form id="chatForm" class="form">
+          <input id="chatMessage" data-i18n-placeholder="chatPlaceholder" placeholder="Escribe un mensaje..." required>
+          <button class="red" type="submit" data-i18n="send">Enviar</button>
+        </form>
+        <div id="chatMessages"></div>
+      </article>
+    </section>
+
+    <section id="hall" class="tab">
+      <article><h2>👑 Hall Of Fame</h2><div id="hallList" class="cards"></div></article>
+    </section>
+
+    <section id="admin" class="tab">
+      <article>
+        <h2 data-i18n="adminTitle">⚙️ Panel Admin</h2>
+        <p data-i18n="adminText">Zona para futuras herramientas de administración.</p>
+        <button class="red">Aprobar clips</button>
+        <button>Aprobar streamers</button>
+        <button>Crear evento</button>
+        <button>Publicar noticia</button>
+      </article>
+    </section>
+  </main>
+
+  <nav class="bottomNav">
+    <button data-tab="home">🏠</button>
+    <button data-tab="feed">🔥</button>
+    <button data-tab="streamers">🎙️</button>
+    <button data-tab="chat">🌎</button>
+    <button data-tab="profile">👤</button>
+  </nav>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
