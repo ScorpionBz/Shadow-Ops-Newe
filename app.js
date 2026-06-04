@@ -455,5 +455,145 @@ function renderBadges(){
     ).join(" ")
     : "Sin medallas";}
 
+```html <section id="chat" class="tab"> ```js
+
+// =======================
+
+// CHAT GLOBAL SHDW
+
+// =======================
+
+
+
+const chatForm = document.getElementById("chatForm");
+
+
+
+if(chatForm){
+
+
+
+  chatForm.onsubmit = async e => {
+
+
+
+    e.preventDefault();
+
+
+
+    const input =
+
+      document.getElementById("chatMessage");
+
+
+
+    const text = input.value.trim();
+
+
+
+    if(!text) return;
+
+
+
+    await push(ref(db,"nexus_chat"),{
+
+
+
+      user:
+
+        currentUser?.gamertag ||
+
+        "Invitado",
+
+
+
+      message:text,
+
+
+
+      createdAt:
+
+        new Date().toISOString()
+
+
+
+    });
+
+
+
+    input.value = "";
+
+  };
+
+}
+
+
+
+onValue(
+
+  ref(db,"nexus_chat"),
+
+  snapshot => {
+
+
+
+    const messages =
+
+      toArray(snapshot.val())
+
+      .sort(
+
+        (a,b)=>
+
+          new Date(a.createdAt) -
+
+          new Date(b.createdAt)
+
+      );
+
+
+
+    const box =
+
+      document.getElementById(
+
+        "chatMessages"
+
+      );
+
+
+
+    if(!box) return;
+
+
+
+    box.innerHTML =
+
+      messages.map(msg => `
+
+
+
+      <div class="card">
+
+
+
+        <b>🎮 ${msg.user}</b>
+
+
+
+        <p>${msg.message}</p>
+
+
+
+      </div>
+
+
+
+      `).join("");
+
+  }
+
+);
+
 
 
