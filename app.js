@@ -351,3 +351,132 @@ window.heartClip = function(index){
 }
 
 renderClips();
+// =======================
+// SHDW SHOP
+// =======================
+
+const shopItems = [
+  {
+    id:"bronze",
+    name:"🥉 Marco Bronce",
+    price:100
+  },
+  {
+    id:"silver",
+    name:"🥈 Marco Plata",
+    price:500
+  },
+  {
+    id:"gold",
+    name:"🥇 Marco Oro",
+    price:1000
+  },
+  {
+    id:"diamond",
+    name:"💎 Marco Diamante",
+    price:5000
+  },
+  {
+    id:"vip",
+    name:"👑 Membresía VIP",
+    price:10000
+  }
+];
+
+function renderShop(){
+
+  const box =
+  document.getElementById("shopItems");
+
+  if(!box) return;
+
+  box.innerHTML =
+  shopItems.map(item=>`
+
+    <div class="card">
+
+      <h3>${item.name}</h3>
+
+      <p>
+      💰 ${item.price} Coins
+      </p>
+
+      <button
+      onclick="buyItem('${item.id}')">
+
+      Comprar
+
+      </button>
+
+    </div>
+
+  `).join("");
+
+  renderInventory();
+}
+
+window.buyItem = function(id){
+
+  const item =
+  shopItems.find(
+    x=>x.id===id
+  );
+
+  if(!item) return;
+
+  if(coins < item.price){
+
+    alert(
+      "No tienes suficientes Coins."
+    );
+
+    return;
+  }
+
+  coins -= item.price;
+
+  inventory.push(item);
+
+  saveData();
+
+  renderCoins();
+
+  renderInventory();
+
+  alert(
+    "Compraste: " + item.name
+  );
+};
+
+function renderInventory(){
+
+  const box =
+  document.getElementById(
+    "inventoryList"
+  );
+
+  if(!box) return;
+
+  box.innerHTML =
+  inventory.length
+
+  ?
+
+  inventory.map(item=>`
+
+    <div class="card">
+
+      <h3>${item.name}</h3>
+
+      <p>Propiedad desbloqueada</p>
+
+    </div>
+
+  `).join("")
+
+  :
+
+  "<p>No tienes artículos.</p>";
+}
+
+renderShop();
