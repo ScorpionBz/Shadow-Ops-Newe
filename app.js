@@ -373,7 +373,6 @@ renderShop();
 renderInventory();
 ```
 
-```js
 // =======================
 // RECOMPENSA DIARIA
 // =======================
@@ -381,219 +380,91 @@ renderInventory();
 const dailyBtn = document.getElementById("dailyReward");
 
 if(dailyBtn){
-
   dailyBtn.onclick = () => {
-
     const today = new Date().toDateString();
-
-    const lastClaim =
-      localStorage.getItem("nexus_daily");
+    const lastClaim = localStorage.getItem("nexus_daily");
 
     if(lastClaim === today){
-
       alert("Ya reclamaste tu recompensa hoy.");
-
       return;
     }
 
-    localStorage.setItem(
-      "nexus_daily",
-      today
-    );
+    localStorage.setItem("nexus_daily", today);
 
     addCoins(100);
     addXP(50);
 
-    alert(
-      "🎁 Ganaste 100 Coins y 50 XP"
-    );
+    alert("🎁 Ganaste 100 Coins y 50 XP");
   };
 }
-```
 
-```js
 // =======================
 // MEDALLAS SHDW
 // =======================
 
 function getBadges(){
-
   const badges = [];
 
-  if(xp >= 100){
-    badges.push("🥉 Recluta");
-  }
-
-  if(xp >= 500){
-    badges.push("🥈 Veterano");
-  }
-
-  if(xp >= 1000){
-    badges.push("🥇 Elite");
-  }
-
-  if(xp >= 5000){
-    badges.push("💎 Leyenda");
-  }
+  if(xp >= 100) badges.push("🥉 Recluta");
+  if(xp >= 500) badges.push("🥈 Veterano");
+  if(xp >= 1000) badges.push("🥇 Elite");
+  if(xp >= 5000) badges.push("💎 Leyenda");
 
   return badges;
 }
 
 function renderBadges(){
-
-  const box =
-  document.getElementById("myBadges");
+  const box = document.getElementById("myBadges");
 
   if(!box) return;
 
   const badges = getBadges();
 
-  box.innerHTML =
-    badges.length
-    ? badges.map(b =>
-      `<span class="badge">${b}</span>`
-    ).join(" ")
-    : "Sin medallas";}
-
-```html <section id="chat" class="tab"> ```js
+  box.innerHTML = badges.length
+    ? badges.map(b => `<span class="badge">${b}</span>`).join(" ")
+    : "Sin medallas";
+}
 
 // =======================
-
 // CHAT GLOBAL SHDW
-
 // =======================
-
-
 
 const chatForm = document.getElementById("chatForm");
 
-
-
 if(chatForm){
+  chatForm.onsubmit = async e => {
+    e.preventDefault();
 
+    const input = document.getElementById("chatMessage");
+    const text = input.value.trim();
 
+    if(!text) return;
 
-  chatForm.onsubmit = async e => {
+    await push(ref(db,"nexus_chat"), {
+      user: currentUser?.gamertag || "Invitado",
+      message: text,
+      createdAt: new Date().toISOString()
+    });
 
-
-
-    e.preventDefault();
-
-
-
-    const input =
-
-      document.getElementById("chatMessage");
-
-
-
-    const text = input.value.trim();
-
-
-
-    if(!text) return;
-
-
-
-    await push(ref(db,"nexus_chat"),{
-
-
-
-      user:
-
-        currentUser?.gamertag ||
-
-        "Invitado",
-
-
-
-      message:text,
-
-
-
-      createdAt:
-
-        new Date().toISOString()
-
-
-
-    });
-
-
-
-    input.value = "";
-
-  };
-
+    input.value = "";
+  };
 }
 
+onValue(ref(db,"nexus_chat"), snapshot => {
+  const messages = toArray(snapshot.val())
+    .sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
 
+  const box = document.getElementById("chatMessages");
 
-onValue(
+  if(!box) return;
 
-  ref(db,"nexus_chat"),
-
-  snapshot => {
-
-
-
-    const messages =
-
-      toArray(snapshot.val())
-
-      .sort(
-
-        (a,b)=>
-
-          new Date(a.createdAt) -
-
-          new Date(b.createdAt)
-
-      );
-
-
-
-    const box =
-
-      document.getElementById(
-
-        "chatMessages"
-
-      );
-
-
-
-    if(!box) return;
-
-
-
-    box.innerHTML =
-
-      messages.map(msg => `
-
-
-
-      <div class="card">
-
-
-
-        <b>🎮 ${msg.user}</b>
-
-
-
-        <p>${msg.message}</p>
-
-
-
-      </div>
-
-
-
-      `).join("");
-
-  }
-
-);
+  box.innerHTML = messages.map(msg => `
+    <div class="card">
+      <b>🎮 ${msg.user}</b>
+      <p>${msg.message}</p>
+    </div>
+  `).join("");
+});
 
 
 
