@@ -59,3 +59,26 @@ onValue(ref(db,"nexus_clips"),s=>{clips=arr(s.val()).sort((a,b)=>new Date(b.crea
 
 setTimeout(()=>{$("splash")?.remove()},1200);
 renderProfile();renderCoins();renderShop();renderInventory();renderBadges();renderStats();
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+const auth = getAuth(app);
+
+const FOUNDER_EMAIL = "scorpbz.oficial@gmail.com";
+
+onAuthStateChanged(auth,(user)=>{
+
+  const founderBtn = document.querySelector('[data-tab="founder"]');
+
+  if(!founderBtn) return;
+
+  if(user && user.email === FOUNDER_EMAIL){
+    founderBtn.style.display = "block";
+  }else{
+    founderBtn.style.display = "none";
+  }
+
+});
