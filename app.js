@@ -82,3 +82,35 @@ onAuthStateChanged(auth,(user)=>{
   }
 
 });
+const founderLoginBtn =
+document.getElementById("founderLoginBtn");
+
+if(founderLoginBtn){
+
+  founderLoginBtn.onclick = async ()=>{
+
+    const email =
+    document.getElementById("founderEmail").value;
+
+    const pass =
+    document.getElementById("founderPass").value;
+
+    try{
+
+      await signInWithEmailAndPassword(
+        auth,
+        email,
+        pass
+      );
+
+      alert("Bienvenido Comandante SHDW");
+
+    }catch(error){
+
+      alert("Acceso denegado");
+
+    }
+
+  };
+
+}
